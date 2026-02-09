@@ -4,12 +4,14 @@ import { AuthService } from './auth.service';
 import { AuthResponseDto } from './dto/response/auth.response.dto';
 import { SignUpRequestDto } from './dto/request/signup.request.dto';
 import { LoginRequestDto } from './dto/request/login.request.dto';
+import { Public } from './decorator/public.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('signup')
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({
@@ -29,6 +31,7 @@ export class AuthController {
     return this.authService.signUp(dto);
   }
 
+  @Public()
   @Post('login')
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({

@@ -4,9 +4,13 @@ import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const reflector = app.get(Reflector);
 
   app.useGlobalFilters(new HttpExceptionFilter());
 
@@ -19,6 +23,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // 모든 API에 자동으로 JWT 인증 적용
+  // 제외할려면 @Public() 데코레이터 붙이면 됨
+  app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   const config = new DocumentBuilder()
     .setTitle('Community API')

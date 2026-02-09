@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { UserResponseDto } from './dto/response/user.response.dto';
+import { UpdateProfileRequestDto } from './dto/request/update-profile.request.dto';
 
 @Injectable()
 export class UserService {
@@ -28,5 +29,22 @@ export class UserService {
   async create(userData: Partial<User>): Promise<User> {
     const user = this.userRepository.create(userData);
     return this.userRepository.save(user);
+  }
+
+  async updateProfile(
+    userId: number,
+    dto: UpdateProfileRequestDto,
+  ): Promise<UserResponseDto> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
+    }
+
+    if (dto.name !== undefined) {
+      user.name = dto.name;
+    }
+
+    const updatedUser = await this.userRepository.save(user);
+    return new UserResponseDto(updatedUser);
   }
 }

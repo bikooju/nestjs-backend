@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
+import { RolesGuard } from './auth/guard/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,9 +25,10 @@ async function bootstrap() {
     }),
   );
 
-  // 모든 API에 자동으로 JWT 인증 적용
-  // 제외할려면 @Public() 데코레이터 붙이면 됨
-  app.useGlobalGuards(new JwtAuthGuard(reflector));
+  app.useGlobalGuards(
+    new JwtAuthGuard(reflector),  // 1. 인증 먼저(모든 API에 자동으로 JWT 인증 적용)
+    new RolesGuard(reflector),    // 2. 권한 체크
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Community API')

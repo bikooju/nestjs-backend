@@ -28,6 +28,12 @@ export class PostResponseDto {
     @ApiProperty({ example: '2026-02-10T10:00:00.000Z', description: '수정일' })
     updatedAt: Date;
 
+    @ApiProperty({ example: 15, description: '좋아요 개수', required: false })
+    likeCount?: number;
+
+    @ApiProperty({ example: true, description: '현재 사용자가 좋아요 했는지', required: false })
+    isLiked?: boolean;
+
     constructor(partial: Partial<PostResponseDto>) {
         Object.assign(this, partial);
     }
